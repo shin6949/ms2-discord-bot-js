@@ -7,5 +7,5 @@ export default {
         .setDescription(REPORT_COMMAND.COMMAND_DESCRIPTION),
     async execute(interaction) {
         await interaction.reply("제보는 ~~으로 부탁드립니다.");
-    },
+    }
 }

@@ -1,1 +1,5 @@
-export { default as command } from './report-command.mjs'
+export {default as report_command} from './report-command.mjs'
+export {default as ox_command} from './ox-command.mjs'
+export {default as minigame_command} from './minigame-command.mjs'
+export {default as field_boss_command} from './field-boss-command.mjs'
+export {default as region_war_command} from './region-war-command.mjs'
