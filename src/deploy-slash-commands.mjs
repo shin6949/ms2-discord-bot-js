@@ -1,23 +1,26 @@
-// ES6
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
+import dotenv from 'dotenv'
+// 상수들
+import { OX_QUIZ_COMMAND, MINIGAME_COMMAND, REPORT_COMMAND, LEGION_WAR_COMMAND, FIELD_BOSS_COMMAND, COMMON_CONSTANTS } from "./constants.mjs";
 
 // DEV, PROD 구분 코드 필요 => DEV 시 dotenv 사용, PROD 시 미사용 (Docker Container 상에서 Environment variables가 지정 되어 있음.)
+dotenv.config({ path: '../.env'});
 
-import 'dotenv/config'
 const client_id = process.env.CLIENT_ID;
 const guild_id = process.env.GUILD_ID;
 const token = process.env.DISCORD_BOT_TOKEN;
+
+if(token === null) {
+	console.log("Token is NULL");
+	process.exit(0);
+}
 
 /*
 	같은 이름일 때, 업데이트
 	다른 이름일 때, 추가
  */
-
-// 상수들을 저장하는 파일
-import { OX_QUIZ_COMMAND, MINIGAME_COMMAND, REPORT_COMMAND, LEGION_WAR_COMMAND, FIELD_BOSS_COMMAND, COMMON_CONSTANTS } from "./constants.mjs";
-
 const commands = [
 	// OX 명령어
 	new SlashCommandBuilder().setName(OX_QUIZ_COMMAND.COMMAND_NAME)
