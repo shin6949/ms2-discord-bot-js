@@ -1,6 +1,10 @@
 import dotenv from 'dotenv'
 import {Client, Collection, Intents} from "discord.js";
-import * as commands from './commands/index.mjs';
+import * as commands from './commands/command-index.mjs';
+import {COMMON_CONSTANTS} from "./constants.mjs";
+
+// 테스트
+import {reportButton} from "./commands/ox-command.mjs";
 
 // Dev, Prod 구분 코드 필요.
 dotenv.config({ path: '../.env'});
@@ -17,17 +21,25 @@ client.once('ready', () => {
 });
 
 client.on('interactionCreate', async interaction => {
-	if (!interaction.isCommand()) return;
-	const command = client.commands.get(interaction.commandName);
-	if (!command) return;
+	if (!interaction.isCommand() && !interaction.isButton()) return;
+	if(interaction.isButton()) {
+		console.log(interaction.customId);
 
-	// 불러온 명령어를 기반으로
-	try {
-		await command.execute(interaction);
-	} catch (error) {
-		console.error(error);
-		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+		await reportButton.execute(interaction);
+	}
+
+	if(interaction.isCommand()) {
+		const command = client.commands.get(interaction.commandName);
+		// 불러온 명령어를 기반으로 명령어 실행
+		try {
+			await command.execute(interaction);
+		} catch (error) {
+			console.error(error);
+			await interaction.reply({ content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true });
+		}
 	}
 });
 
-client.login(process.env.DISCORD_BOT_TOKEN).then(r => console.error(r));
+client.login(process.env.DISCORD_BOT_TOKEN).then(r => {
+
+});

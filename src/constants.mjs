@@ -1,13 +1,15 @@
 export let COMMON_CONSTANTS = {
     SOON: "곧",
-    NEXT: "다음"
+    NEXT: "다음",
+    ERROR_MESSAGE: "처리 중 오류가 발생하였습니다."
 }
 
 export let OX_QUIZ_COMMAND = {
     COMMAND_NAME: "ox",
     COMMAND_DESCRIPTION: "OX 퀴즈쇼 족보를 검색합니다.",
     OPTION_NAME: "검색어",
-    OPTION_DESCRIPTION: "문제의 일부를 입력하여 검색합니다."
+    OPTION_DESCRIPTION: "문제의 일부를 입력하여 검색합니다.",
+    REPORT_BUTTON_NAME: "제보하기"
 }
 
 export let MINIGAME_COMMAND = {
@@ -58,9 +60,7 @@ export let LEGION_WAR_COMMAND = {
     OPTION_DESCRIPTION: "표시할 시간을 선택하세요."
 }
 
-let REPORT_COMMAND = {
+export let REPORT_COMMAND = {
     COMMAND_NAME: "제보",
     COMMAND_DESCRIPTION: "제보를 위한 이메일 정보를 봅니다."
 }
-
-export {REPORT_COMMAND}
