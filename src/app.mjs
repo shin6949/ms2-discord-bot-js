@@ -18,6 +18,7 @@ for (const commandName of Object.keys(commands)) {
 
 client.once('ready', () => {
 	console.log('Ready!');
+	console.log(`Client ID: ${client.user.id} / Client Username: ${client.user.username}#${client.user.tag}`)
 });
 
 client.on('interactionCreate', async interaction => {
