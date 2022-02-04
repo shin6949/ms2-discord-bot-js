@@ -1,5 +1,6 @@
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
+import * as commands from './commands/command-index.mjs';
 import dotenv from 'dotenv'
 
 dotenv.config({ path: '../.env'});
@@ -13,12 +14,16 @@ if(token === null) {
 	process.exit(0);
 }
 
-// TODO: 정의 필요
-const commands = null;
+const toDeployCommands = [];
+for (const commandName of Object.keys(commands)) {
+	toDeployCommands.push(commands[commandName].data);
+}
+
+// console.log(toDeployCommands);
 
 const rest = new REST({ version: '9' }).setToken(token);
 
-// rest.put(Routes.applicationCommands(client_id), { body: commands })
-rest.put(Routes.applicationGuildCommands(client_id, guild_id), { body: commands })
+// rest.put(Routes.applicationCommands(client_id), { body: toDeployCommands })
+rest.put(Routes.applicationGuildCommands(client_id, guild_id), { body: toDeployCommands })
 	.then(() => console.log('Successfully registered application commands.'))
 	.catch(console.error);
