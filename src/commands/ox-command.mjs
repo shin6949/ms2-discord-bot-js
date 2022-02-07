@@ -15,8 +15,6 @@ export default {
         console.log("OX Interaction Received.");
 
         const keyword = interaction.options.getString(OX_QUIZ_COMMAND.OPTION_NAME);
-        console.log(`Request User ID: ${interaction.user.id} / Keyword: ${keyword}`);
-
         await interaction.deferReply();
 
         const requestData = {
@@ -46,6 +44,7 @@ export default {
             if (err !== null) {
                 console.error(err);
                 await interaction.editReply(COMMON_CONSTANTS.ERROR_MESSAGE);
+                return;
             }
 
             // 결과가 없는 경우
