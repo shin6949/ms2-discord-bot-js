@@ -15,6 +15,7 @@ rest.get(Routes.applicationGuildCommands(clientId, guildId))
 	.then(data => {
 		const promises = [];
 		for (const command of data) {
+			// 전체 서버의 명령어 삭제
 			// const deleteUrl = `${Routes.applicationCommands(clientId)}/${command.id}`;
 			// 특정 서버의 명령어 삭제
 			const deleteUrl = `${Routes.applicationGuildCommands(clientId, guildId)}/${command.id}`;

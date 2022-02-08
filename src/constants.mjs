@@ -2,6 +2,7 @@ export let COMMON_CONSTANTS = {
     SOON: "곧",
     NEXT: "다음",
     ERROR_MESSAGE: "처리 중 오류가 발생하였습니다.",
+    BAN_MESSAGE: "차단된 사용자로 사용이 불가능합니다."
 }
 
 export let OX_QUIZ_COMMAND = {
@@ -14,14 +15,19 @@ export let OX_QUIZ_COMMAND = {
 }
 
 export let MINIGAME_COMMAND = {
-    COMMAND_NAME: "미겜",
+    COMMAND_NAME: "미니게임",
     COMMAND_DESCRIPTION: "곧/다음에 등장하는 미니게임을 봅니다.",
     OPTION_NAME: "타이밍",
-    OPTION_DESCRIPTION: "표시할 시간을 결정하세요."
+    OPTION_DESCRIPTION: "표시할 시간을 결정하세요.",
+    EMBED_TITLE: "에 진행될 미니게임",
+    FIRST: "첫",
+    SECOND: "두",
+    PVP: "PvP",
+    EMBED_FIELD_TITLE: "번째 미니게임"
 }
 
 export let FIELD_BOSS_COMMAND = {
-    COMMAND_NAME: "필보",
+    COMMAND_NAME: "필드보스",
     COMMAND_DESCRIPTION: "곧/다음에 등장하는 필드보스의 정보를 보거나 특정 필드보스를 검색합니다.",
     SUB_COMMANDS: {
         INFORMATION: {
@@ -55,7 +61,7 @@ export let FIELD_BOSS_COMMAND = {
 }
 
 export let LEGION_WAR_COMMAND = {
-    COMMAND_NAME: "군단",
+    COMMAND_NAME: "군단전",
     COMMAND_DESCRIPTION: "곧/다음에 등장할 군단전의 정보를 봅니다.",
     OPTION_NAME: "타이밍",
     OPTION_DESCRIPTION: "표시할 시간을 선택하세요."

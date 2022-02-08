@@ -3,7 +3,7 @@ import {MessageActionRow, MessageButton} from 'discord.js';
 import {OX_QUIZ_COMMAND} from "../constants.mjs";
 import {report_command} from "./command-index.mjs";
 import {default as requestToAPI} from './request-to-api.mjs';
-import {default as errorHandling} from './error-handling.mjs'
+import {default as errorHandling} from './error-handling.mjs';
 
 export default {
     data: new SlashCommandBuilder().setName(OX_QUIZ_COMMAND.COMMAND_NAME)
@@ -18,7 +18,7 @@ export default {
         const keyword = interaction.options.getString(OX_QUIZ_COMMAND.OPTION_NAME);
         await interaction.deferReply();
 
-        let requestData = {
+        const requestData = {
             uri: `${process.env.API_SERVER_URL}/ox/search`,
             method: "GET",
             qs: {
@@ -27,17 +27,21 @@ export default {
             json: true,
         };
 
-        const res = requestToAPI(requestData).then(async function(response) {
+        requestToAPI(requestData).then(async function(response) {
             // 결과가 없는 경우
             if (response.body.count === 0) {
                 await interaction.editReply({content: `\'${keyword}\'에 대한 검색 결과가 없습니다.`, components: [reportButton.button]});
+                console.log("Process Success.");
                 return;
             }
 
             // 결과가 있는 경우
             await interaction.editReply(_configure_message(response.body, keyword));
+            console.log("Process Success.");
 
         }).catch(function(err) {
+            console.log("ERROR OCCURRED.");
+            console.error(err);
             errorHandling(interaction);
         });
     }
@@ -55,6 +59,7 @@ function _configure_message(body, keyword) {
         }
     });
 
+    // Discord 글제수 제한 예외처리
     if(result.length > 3000) {
         result = OX_QUIZ_COMMAND.DISCORD_MAX_LETTER_ERROR;
     }

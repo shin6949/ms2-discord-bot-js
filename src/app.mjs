@@ -1,12 +1,13 @@
 import dotenv from 'dotenv'
 import {Client, Collection, Intents} from "discord.js";
-
 // 명령 액션들
 import * as commands from './commands/command-index.mjs';
 import * as buttonCommands from "./commands/button-index.mjs";
-
 // 상수
 import {COMMON_CONSTANTS} from "./constants.mjs";
+// Ban Check용
+import {default as requestToAPI} from './commands/request-to-api.mjs';
+import {reportButton} from "./commands/ox-command.mjs";
 
 // Dev, Prod 구분 코드 필요.
 dotenv.config({ path: '../.env'});
@@ -32,38 +33,63 @@ client.once('ready', () => {
 	console.log(`Client ID: ${client.user.id} / Client Username: ${client.user.tag}`);
 });
 
-client.on('interactionCreate', async interaction => {
+client.on('interactionCreate',  interaction => {
 	// 불요불급 언급 및 메시지는 처리하지 않음.
 	if (!interaction.isCommand() && !interaction.isButton()) return;
 
 	console.log(`Time: ${new Date().toLocaleString(Intl.DateTimeFormat().resolvedOptions().locale)} / Request User ID: ${interaction.user.id} / Type: ${interaction.type}`);
 
-	if(interaction.isButton()) {
-		const command = client.buttonActions.get(interaction.customId);
+	// 사용 금지 유저 체크하기 위한 requestData
+	const requestData = {
+		uri: `${process.env.API_SERVER_URL}/ban/check/${interaction.user.id}`,
+		method: "GET",
+		json: true
+	};
 
-		// 불러온 명령어를 기반으로 명령어 실행
-		try {
-			await command.execute(interaction);
-		} catch (error) {
-			console.error(error);
-			await interaction.reply({ content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true });
+	// 코드 정리할 방법을 찾아야함.
+	let banned = false;
+	requestToAPI(requestData).then(async function (response) {
+		if (response.body) {
+			console.log("This user is banned.");
+			banned = true;
+			await interaction.reply({content: COMMON_CONSTANTS.BAN_MESSAGE, ephemeral: true});
 		}
-	}
 
-	if(interaction.isCommand()) {
-		const command = client.commands.get(interaction.commandName);
-		// 불러온 명령어를 기반으로 명령어 실행
-		try {
-			await command.execute(interaction);
-		} catch (error) {
+		// 차단 당한 유저라면 처리 중지
+		if (banned) {
+			console.log(banned);
+			return;
+		}
+
+		if (interaction.isButton()) {
+			const command = client.buttonActions.get(interaction.customId);
+
+			// 불러온 명령어를 기반으로 명령어 실행
 			try {
-				await interaction.reply({ content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true });
-			} catch (err) {
-				await interaction.editReply({ content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true });
+				await command.execute(interaction);
+			} catch (error) {
+				console.error(error);
+				await interaction.reply({content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true});
 			}
-
 		}
-	}
+
+		if (interaction.isCommand()) {
+			const command = client.commands.get(interaction.commandName);
+			// 불러온 명령어를 기반으로 명령어 실행
+			try {
+				await command.execute(interaction);
+			} catch (error) {
+				try {
+					await interaction.reply({content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true});
+				} catch (err) {
+					await interaction.editReply({content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true});
+				}
+			}
+		}
+	}).catch(function (err) {
+		console.error(err);
+		console.log("Ban Check Failed.");
+	});
 });
 
 client.login(process.env.DISCORD_BOT_TOKEN).then(r => {
