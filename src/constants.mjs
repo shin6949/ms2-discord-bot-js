@@ -11,7 +11,8 @@ export let OX_QUIZ_COMMAND = {
     OPTION_NAME: "검색어",
     OPTION_DESCRIPTION: "문제의 일부를 입력하여 검색합니다.",
     REPORT_BUTTON_NAME: "제보하기",
-    DISCORD_MAX_LETTER_ERROR: "디스코드 내 최대 글자수 제한이 있어서 결과를 표시 할 수 없습니다. 좀 더 길게 검색해보세요."
+    DISCORD_MAX_LETTER_ERROR: "디스코드 내 최대 글자수 제한이 있어서 결과를 표시 할 수 없습니다. 좀 더 길게 검색해보세요.",
+    LOG_CODE: "ox"
 }
 
 export let MINIGAME_COMMAND = {
@@ -23,12 +24,14 @@ export let MINIGAME_COMMAND = {
     FIRST: "첫",
     SECOND: "두",
     PVP: "PvP",
-    EMBED_FIELD_TITLE: "번째 미니게임"
+    EMBED_FIELD_TITLE: "번째 미니게임",
+    LOG_CODE: "mini"
 }
 
 export let FIELD_BOSS_COMMAND = {
     COMMAND_NAME: "필드보스",
     COMMAND_DESCRIPTION: "곧/다음에 등장하는 필드보스의 정보를 보거나 특정 필드보스를 검색합니다.",
+    LOG_CODE: "boss",
     SUB_COMMANDS: {
         INFORMATION: {
             COMMAND_NAME: "정보",

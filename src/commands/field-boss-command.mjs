@@ -22,7 +22,7 @@ export default {
                 .addStringOption(option =>
                     option.setName(FIELD_BOSS_COMMAND.SUB_COMMANDS.TIME_SEARCH.OPTION_NAME)
                         .setDescription(FIELD_BOSS_COMMAND.SUB_COMMANDS.TIME_SEARCH.OPTION_DESCRIPTION)
-                        .setRequired(false)
+                        .setRequired(true)
                         .addChoices(FIELD_BOSS_COMMAND.SUB_COMMANDS.TIME_SEARCH.OPTION_CHOICES)
                 )
         )
@@ -32,7 +32,7 @@ export default {
                 .addStringOption(option =>
                     option.setName(FIELD_BOSS_COMMAND.SUB_COMMANDS.NAME_SEARCH.OPTION_NAME)
                         .setDescription(FIELD_BOSS_COMMAND.SUB_COMMANDS.NAME_SEARCH.OPTION_DESCRIPTION)
-                        .setRequired(false)
+                        .setRequired(true)
                 )
         ),
     async execute(interaction) {

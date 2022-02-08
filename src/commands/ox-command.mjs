@@ -1,9 +1,11 @@
 import {SlashCommandBuilder} from "@discordjs/builders";
 import {MessageActionRow, MessageButton} from 'discord.js';
-import {OX_QUIZ_COMMAND} from "../constants.mjs";
-import {report_command} from "./command-index.mjs";
 import {default as requestToAPI} from './request-to-api.mjs';
 import {default as errorHandling} from './error-handling.mjs';
+import {default as insertLog} from './insert-log.mjs';
+// 상수
+import {OX_QUIZ_COMMAND} from "../constants.mjs";
+import {report_command} from "./command-index.mjs";
 
 export default {
     data: new SlashCommandBuilder().setName(OX_QUIZ_COMMAND.COMMAND_NAME)
@@ -27,18 +29,12 @@ export default {
             json: true,
         };
 
-        requestToAPI(requestData).then(async function(response) {
-            // 결과가 없는 경우
-            if (response.body.count === 0) {
-                await interaction.editReply({content: `\'${keyword}\'에 대한 검색 결과가 없습니다.`, components: [reportButton.button]});
-                console.log("Process Success.");
-                return;
-            }
-
-            // 결과가 있는 경우
-            await interaction.editReply(_configure_message(response.body, keyword));
-            console.log("Process Success.");
-
+        requestToAPI(requestData).then(function(response) {
+            // _sendMessageAndReturnMessage 수행 완료 후, Return 받으면 Promise Object로 변경됨.
+            const sentMessage = _sendMessageAndReturnMessage(response.body, interaction, keyword);
+            const query = `/${OX_QUIZ_COMMAND.COMMAND_NAME} ${OX_QUIZ_COMMAND.OPTION_NAME}:${keyword}`;
+            insertLog(query, OX_QUIZ_COMMAND.LOG_CODE, interaction.guildId === null, interaction.user.id, interaction.guildId, sentMessage);
+            console.log("LOG INSERT FINISHED");
         }).catch(function(err) {
             console.log("ERROR OCCURRED.");
             console.error(err);
@@ -47,7 +43,7 @@ export default {
     }
 }
 
-function _configure_message(body, keyword) {
+function _configureMessageAndReturn(body, keyword) {
     let result = `\'${keyword}\'에 대한 ${body.mode} 결과: ${body.count}개\n`;
     const problemList = body.problems;
 
@@ -64,7 +60,26 @@ function _configure_message(body, keyword) {
         result = OX_QUIZ_COMMAND.DISCORD_MAX_LETTER_ERROR;
     }
 
+    // 여기까지는 String
     return result;
+}
+
+async function _sendMessageAndReturnMessage(body, interaction, keyword) {
+    let message = "";
+
+    // 결과가 없는 경우
+    if (body.count === 0) {
+        message = `\'${keyword}\'에 대한 검색 결과가 없습니다.`;
+        await interaction.editReply({content: message, components: [reportButton.button]});
+    } else {
+        // 결과가 있는 경우
+        message = _configureMessageAndReturn(body, keyword);
+        await interaction.editReply(message);
+    }
+
+    console.log("Process Success.");
+    // 여기까지도 String
+    return message;
 }
 
 // 검색 결과가 없을 시 표출할 버튼 객체 및 액션

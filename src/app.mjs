@@ -7,7 +7,6 @@ import * as buttonCommands from "./commands/button-index.mjs";
 import {COMMON_CONSTANTS} from "./constants.mjs";
 // Ban Check용
 import {default as requestToAPI} from './commands/request-to-api.mjs';
-import {reportButton} from "./commands/ox-command.mjs";
 
 // Dev, Prod 구분 코드 필요.
 dotenv.config({ path: '../.env'});
@@ -46,46 +45,37 @@ client.on('interactionCreate',  interaction => {
 		json: true
 	};
 
-	// 코드 정리할 방법을 찾아야함.
-	let banned = false;
+	// TODO: 코드 정리할 방법을 찾아야함.
 	requestToAPI(requestData).then(async function (response) {
-		if (response.body) {
-			console.log("This user is banned.");
-			banned = true;
-			await interaction.reply({content: COMMON_CONSTANTS.BAN_MESSAGE, ephemeral: true});
-		}
+		let banned = response.body;
 
 		// 차단 당한 유저라면 처리 중지
 		if (banned) {
-			console.log(banned);
+			console.log("This user is banned.");
+			await interaction.reply({content: COMMON_CONSTANTS.BAN_MESSAGE, ephemeral: true});
 			return;
 		}
 
-		if (interaction.isButton()) {
-			const command = client.buttonActions.get(interaction.customId);
-
-			// 불러온 명령어를 기반으로 명령어 실행
-			try {
+		try {
+			if (interaction.isButton()) {
+				const command = client.buttonActions.get(interaction.customId);
 				await command.execute(interaction);
-			} catch (error) {
-				console.error(error);
+			}
+
+			if (interaction.isCommand()) {
+				const command = client.commands.get(interaction.commandName);
+				await command.execute(interaction);
+
+			}
+		} catch (err) {
+			console.error(err);
+			try {
 				await interaction.reply({content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true});
+			} catch (err) {
+				await interaction.editReply({content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true});
 			}
 		}
 
-		if (interaction.isCommand()) {
-			const command = client.commands.get(interaction.commandName);
-			// 불러온 명령어를 기반으로 명령어 실행
-			try {
-				await command.execute(interaction);
-			} catch (error) {
-				try {
-					await interaction.reply({content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true});
-				} catch (err) {
-					await interaction.editReply({content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true});
-				}
-			}
-		}
 	}).catch(function (err) {
 		console.error(err);
 		console.log("Ban Check Failed.");
