@@ -1,8 +1,9 @@
 import {SlashCommandBuilder} from "@discordjs/builders";
 import {MessageActionRow, MessageButton} from 'discord.js';
-import {OX_QUIZ_COMMAND, COMMON_CONSTANTS} from "../constants.mjs";
+import {OX_QUIZ_COMMAND} from "../constants.mjs";
 import {report_command} from "./command-index.mjs";
-import request from 'request';
+import {default as requestToAPI} from './request-to-api.mjs';
+import {default as errorHandling} from './error-handling.mjs'
 
 export default {
     data: new SlashCommandBuilder().setName(OX_QUIZ_COMMAND.COMMAND_NAME)
@@ -17,45 +18,48 @@ export default {
         const keyword = interaction.options.getString(OX_QUIZ_COMMAND.OPTION_NAME);
         await interaction.deferReply();
 
-        const requestData = {
+        let requestData = {
             uri: `${process.env.API_SERVER_URL}/ox/search`,
             method: "GET",
             qs: {
-                apitoken: process.env.API_TOKEN,
                 keyword: keyword
             },
-            body: {
-                query: `/${OX_QUIZ_COMMAND.COMMAND_NAME} ${OX_QUIZ_COMMAND.OPTION_NAME}:${keyword}`,
-                callValue: `${OX_QUIZ_COMMAND.COMMAND_NAME}`,
-                isDm: interaction.guildId === null,
-                userId: interaction.user.id,
-                serverId: interaction.guildId
-            },
             json: true,
-            headers: {
-                'Accept': 'application/json',
-                'Accept-Encoding': 'gzip, deflate, br',
-                'Content-Type': 'application/json'
-            }
         };
 
-        request(requestData,async function (err, response, body) {
-            // API 서버에서 에러가 발생한 경우
-            if (err !== null) {
-                console.error(err);
-                await interaction.editReply(COMMON_CONSTANTS.ERROR_MESSAGE);
-                return;
-            }
-
+        const res = requestToAPI(requestData).then(async function(response) {
             // 결과가 없는 경우
-            if (body.count === 0) {
+            if (response.body.count === 0) {
                 await interaction.editReply({content: `\'${keyword}\'에 대한 검색 결과가 없습니다.`, components: [reportButton.button]});
                 return;
             }
 
-            await interaction.editReply({content: `\'${keyword}\'에 대한 ${body.count}개의 검색 결과`});
-        })
+            // 결과가 있는 경우
+            await interaction.editReply(_configure_message(response.body, keyword));
+
+        }).catch(function(err) {
+            errorHandling(interaction);
+        });
     }
+}
+
+function _configure_message(body, keyword) {
+    let result = `\'${keyword}\'에 대한 ${body.mode} 결과: ${body.count}개\n`;
+    const problemList = body.problems;
+
+    problemList.forEach(function (problem) {
+        if(problem.answer) {
+            result += `\`\`\`ini\n[O] ${problem.question}\`\`\``;
+        } else {
+            result += `\`\`\`\n[X] ${problem.question}\`\`\``;
+        }
+    });
+
+    if(result.length > 3000) {
+        result = OX_QUIZ_COMMAND.DISCORD_MAX_LETTER_ERROR;
+    }
+
+    return result;
 }
 
 // 검색 결과가 없을 시 표출할 버튼 객체 및 액션

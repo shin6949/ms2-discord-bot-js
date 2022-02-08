@@ -18,4 +18,3 @@ Discord 서버와 통신하며 요청을 제공 받고, 결과를 제공함.
 - DISCORD_BOT_TOKEN: Discord Developers Portal에서 발급 받은 Bot의 Token
 - CLIENT_ID: Discord Developers Portal에서 발급 받은 Application의 Client ID
 - API_SERVER_URL: Bot 이 참조할 API 서버의 주소
-- API_TOKEN: API 에 접근하기 위한 토큰 값

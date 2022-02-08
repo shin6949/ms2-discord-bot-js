@@ -1,7 +1,7 @@
 export let COMMON_CONSTANTS = {
     SOON: "곧",
     NEXT: "다음",
-    ERROR_MESSAGE: "처리 중 오류가 발생하였습니다."
+    ERROR_MESSAGE: "처리 중 오류가 발생하였습니다.",
 }
 
 export let OX_QUIZ_COMMAND = {
@@ -9,7 +9,8 @@ export let OX_QUIZ_COMMAND = {
     COMMAND_DESCRIPTION: "OX 퀴즈쇼 족보를 검색합니다.",
     OPTION_NAME: "검색어",
     OPTION_DESCRIPTION: "문제의 일부를 입력하여 검색합니다.",
-    REPORT_BUTTON_NAME: "제보하기"
+    REPORT_BUTTON_NAME: "제보하기",
+    DISCORD_MAX_LETTER_ERROR: "디스코드 내 최대 글자수 제한이 있어서 결과를 표시 할 수 없습니다. 좀 더 길게 검색해보세요."
 }
 
 export let MINIGAME_COMMAND = {

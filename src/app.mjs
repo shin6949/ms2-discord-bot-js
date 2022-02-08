@@ -28,7 +28,7 @@ for (const buttonCommandName of Object.keys(buttonCommands)) {
 console.log(`Registered Button Actions Num: ${client.buttonActions.size}`);
 
 client.once('ready', () => {
-	console.log('\nReady!');
+	console.log('Ready to receive commands');
 	console.log(`Client ID: ${client.user.id} / Client Username: ${client.user.tag}`);
 });
 
@@ -36,8 +36,7 @@ client.on('interactionCreate', async interaction => {
 	// 불요불급 언급 및 메시지는 처리하지 않음.
 	if (!interaction.isCommand() && !interaction.isButton()) return;
 
-	console.log(`Time: ${new Date().toLocaleString(Intl.DateTimeFormat().resolvedOptions().locale)} 
-	/ Request User ID: ${interaction.user.id} / Type: ${interaction.type}`);
+	console.log(`Time: ${new Date().toLocaleString(Intl.DateTimeFormat().resolvedOptions().locale)} / Request User ID: ${interaction.user.id} / Type: ${interaction.type}`);
 
 	if(interaction.isButton()) {
 		const command = client.buttonActions.get(interaction.customId);
@@ -57,12 +56,16 @@ client.on('interactionCreate', async interaction => {
 		try {
 			await command.execute(interaction);
 		} catch (error) {
-			console.error(error);
-			await interaction.reply({ content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true });
+			try {
+				await interaction.reply({ content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true });
+			} catch (err) {
+				await interaction.editReply({ content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true });
+			}
+
 		}
 	}
 });
 
 client.login(process.env.DISCORD_BOT_TOKEN).then(r => {
-	console.log("LOGIN SUCCESS.\n")
+	console.log("LOGIN SUCCESS.")
 });
