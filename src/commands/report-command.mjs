@@ -6,6 +6,6 @@ export default {
         .setName(REPORT_COMMAND.COMMAND_NAME)
         .setDescription(REPORT_COMMAND.COMMAND_DESCRIPTION),
     async execute(interaction) {
-        await interaction.reply("제보는 ~~으로 부탁드립니다.");
+        await interaction.reply(REPORT_COMMAND.COMMAND_REPLY);
     }
 }

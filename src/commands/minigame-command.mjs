@@ -36,14 +36,14 @@ export default {
             json: true
         }
 
-        requestToAPI(requestData).then(async function(response) {
+        requestToAPI(requestData).then(async response => {
             await interaction.editReply({embeds: [_configureEmbedContent(response.body)]});
             console.log("Process Success.");
 
             // Embed 컨텐츠는 String이 아니므로 병렬로 진행
-            await _insertLog(response.body, interaction.guildId, interaction.user.id, interaction.options.getString(MINIGAME_COMMAND.OPTION_NAME));
+            _insertLog(response.body, interaction.guildId, interaction.user.id, interaction.options.getString(MINIGAME_COMMAND.OPTION_NAME));
 
-        }).catch(function(err) {
+        }).catch(err => {
             console.log("ERROR OCCURRED.");
             console.error(err);
             errorHandling(interaction);

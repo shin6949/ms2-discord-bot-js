@@ -32,10 +32,9 @@ client.once('ready', () => {
 	console.log(`Client ID: ${client.user.id} / Client Username: ${client.user.tag}`);
 });
 
-client.on('interactionCreate',  interaction => {
+client.on('interactionCreate',  async interaction => {
 	// 불요불급 언급 및 메시지는 처리하지 않음.
 	if (!interaction.isCommand() && !interaction.isButton()) return;
-
 	console.log(`Time: ${new Date().toLocaleString(Intl.DateTimeFormat().resolvedOptions().locale)} / Request User ID: ${interaction.user.id} / Type: ${interaction.type}`);
 
 	// 사용 금지 유저 체크하기 위한 requestData
@@ -45,41 +44,41 @@ client.on('interactionCreate',  interaction => {
 		json: true
 	};
 
-	// TODO: 코드 정리할 방법을 찾아야함.
-	requestToAPI(requestData).then(async function (response) {
-		let banned = response.body;
-
-		// 차단 당한 유저라면 처리 중지
-		if (banned) {
-			console.log("This user is banned.");
-			await interaction.reply({content: COMMON_CONSTANTS.BAN_MESSAGE, ephemeral: true});
-			return;
-		}
-
-		try {
-			if (interaction.isButton()) {
-				const command = client.buttonActions.get(interaction.customId);
-				await command.execute(interaction);
-			}
-
-			if (interaction.isCommand()) {
-				const command = client.commands.get(interaction.commandName);
-				await command.execute(interaction);
-			}
-		} catch (err) {
-			console.error(err);
-			try {
-				await interaction.reply({content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true});
-			} catch (err) {
-				await interaction.editReply({content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true});
-			}
-		}
-	}).catch(function (err) {
+	let banned = false;
+	await requestToAPI(requestData).then(response => {
+		banned = response.body;
+	}).catch(err => {
+		// Ban 체크 실패하면 정상 작동할 수 있도록 false 유지
 		console.error(err);
-		console.log("Ban Check Failed.");
 	});
+
+	// 차단 당한 유저라면 처리 중지
+	if (banned) {
+		console.log("This user is banned.");
+		await interaction.reply({content: COMMON_CONSTANTS.BAN_MESSAGE, ephemeral: true});
+		return;
+	}
+
+	try {
+		if (interaction.isButton()) {
+			const command = client.buttonActions.get(interaction.customId);
+			await command.execute(interaction);
+		}
+
+		if (interaction.isCommand()) {
+			const command = client.commands.get(interaction.commandName);
+			await command.execute(interaction);
+		}
+	} catch (err) {
+		console.error(err);
+		try {
+			await interaction.reply({content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true});
+		} catch (err) {
+			await interaction.editReply({content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true});
+		}
+	}
 });
 
-client.login(process.env.DISCORD_BOT_TOKEN).then(r => {
-	console.log("LOGIN SUCCESS.")
+client.login(process.env.DISCORD_BOT_TOKEN).then(function () {
+	console.log("LOGIN SUCCESS.");
 });

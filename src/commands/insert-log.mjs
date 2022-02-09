@@ -17,8 +17,7 @@ export default async function (log) {
 
     requestToAPI(requestData).then(function () {
         console.log("LOG INSERT FINISHED");
-    }).catch(function(err) {
-        console.log("ERROR OCCURRED.");
+    }).catch(err => {
         console.log("LOG INSERT FAILED");
         console.error(err);
     });

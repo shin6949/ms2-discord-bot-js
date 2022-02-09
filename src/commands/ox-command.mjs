@@ -26,16 +26,16 @@ export default {
             qs: {
                 keyword: keyword
             },
-            json: true,
+            json: true
         };
 
-        requestToAPI(requestData).then(function(response) {
+        requestToAPI(requestData).then(response => {
             const sentMessage = _sendMessageAndReturnMessage(response.body, interaction, keyword);
             const query = `/${OX_QUIZ_COMMAND.COMMAND_NAME} ${OX_QUIZ_COMMAND.OPTION_NAME}:${keyword}`;
             const log = new Log(query, OX_QUIZ_COMMAND.LOG_CODE, interaction.guildId === null, interaction.user.id, interaction.guildId, sentMessage);
 
             insertLog(log);
-        }).catch(function(err) {
+        }).catch(err => {
             console.log("ERROR OCCURRED.");
             console.error(err);
             errorHandling(interaction);
@@ -45,6 +45,7 @@ export default {
 
 function _configureMessageAndReturn(body, keyword) {
     let message = `\'${keyword}\'에 대한 ${body.mode} 결과: ${body.count}개`;
+    const problemList = body.problems;
 
     // 결과가 없는 경우
     if (body.count === 0) {
@@ -52,9 +53,7 @@ function _configureMessageAndReturn(body, keyword) {
         return {content: message, components: [reportButton.button]};
     }
 
-    const problemList = body.problems;
-
-    problemList.forEach(function (problem) {
+    problemList.forEach(problem => {
         if(problem.answer) {
             message += `\`\`\`ini\n[O] ${problem.question}\`\`\``;
         } else {

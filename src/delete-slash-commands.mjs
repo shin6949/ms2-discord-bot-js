@@ -7,6 +7,11 @@ const token = process.env.DISCORD_BOT_TOKEN;
 const clientId = process.env.CLIENT_ID;
 const guildId = process.env.GUILD_ID;
 
+if(token === null) {
+	console.log("Token is NULL");
+	process.exit(0);
+}
+
 const rest = new REST({ version: '9' }).setToken(token);
 
 // rest.get(Routes.applicationCommands(clientId))

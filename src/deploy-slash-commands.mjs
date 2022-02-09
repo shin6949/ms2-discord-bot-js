@@ -19,8 +19,6 @@ for (const commandName of Object.keys(commands)) {
 	toDeployCommands.push(commands[commandName].data);
 }
 
-// console.log(toDeployCommands);
-
 const rest = new REST({ version: '9' }).setToken(token);
 
 // rest.put(Routes.applicationCommands(client_id), { body: toDeployCommands })
