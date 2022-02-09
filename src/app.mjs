@@ -5,7 +5,7 @@ import * as commands from './commands/command-index.mjs';
 import * as buttonCommands from "./commands/button-index.mjs";
 // 상수
 import {COMMON_CONSTANTS} from "./constants.mjs";
-// Ban Check용
+// Ban Check 용
 import {default as requestToAPI} from './commands/request-to-api.mjs';
 
 // Dev, Prod 구분 코드 필요.
@@ -65,7 +65,6 @@ client.on('interactionCreate',  interaction => {
 			if (interaction.isCommand()) {
 				const command = client.commands.get(interaction.commandName);
 				await command.execute(interaction);
-
 			}
 		} catch (err) {
 			console.error(err);
@@ -75,7 +74,6 @@ client.on('interactionCreate',  interaction => {
 				await interaction.editReply({content: COMMON_CONSTANTS.ERROR_MESSAGE, ephemeral: true});
 			}
 		}
-
 	}).catch(function (err) {
 		console.error(err);
 		console.log("Ban Check Failed.");
