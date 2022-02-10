@@ -1,5 +1,5 @@
 import {SlashCommandBuilder} from "@discordjs/builders";
-import {COMMON_CONSTANTS, LEGION_WAR_COMMAND, MINIGAME_COMMAND} from "../constants.mjs";
+import {COMMON_CONSTANTS, LEGION_WAR_COMMAND} from "../constants.mjs";
 import {MessageEmbed} from "discord.js";
 import {default as errorHandling} from './error-handling.mjs';
 import insertLog, {Log} from "./insert-log.mjs";
@@ -53,7 +53,7 @@ export default {
 function _insertLog(body, guildId, userId, optionValue) {
     const sentMessage = `${body.time}${LEGION_WAR_COMMAND.EMBED_TITLE}\n${LEGION_WAR_COMMAND.EMBED_DESCRIPTION}\n` +
         `${LEGION_WAR_COMMAND.FIRST}${LEGION_WAR_COMMAND.EMBED_FIELD_TITLE}\n${body["legion-wars"][0].name}\n` +
-        `${LEGION_WAR_COMMAND.SECOND}${LEGION_WAR_COMMAND.EMBED_FIELD_TITLE}\n${body["legion-wars"][1].name}`
+        `${LEGION_WAR_COMMAND.SECOND}${LEGION_WAR_COMMAND.EMBED_FIELD_TITLE}\n${body["legion-wars"][1].name}`;
     const query = `/${LEGION_WAR_COMMAND.COMMAND_NAME} ${LEGION_WAR_COMMAND.OPTION_NAME}:${optionValue}`;
     const log = new Log(query, LEGION_WAR_COMMAND.LOG_CODE, guildId === null, userId, guildId, sentMessage);
 
@@ -70,6 +70,6 @@ function _configureEmbedContent(body) {
         .setDescription(LEGION_WAR_COMMAND.EMBED_DESCRIPTION)
         .addFields(
             {name: `${LEGION_WAR_COMMAND.FIRST}${LEGION_WAR_COMMAND.EMBED_FIELD_TITLE}`, value: body["legion-wars"][0].name},
-            {name: `${MINIGAME_COMMAND.SECOND}${MINIGAME_COMMAND.EMBED_FIELD_TITLE}`, value: body["legion-wars"][1].name}
+            {name: `${LEGION_WAR_COMMAND.SECOND}${LEGION_WAR_COMMAND.EMBED_FIELD_TITLE}`, value: body["legion-wars"][1].name}
         );
 }

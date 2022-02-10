@@ -33,7 +33,7 @@ export let FIELD_BOSS_COMMAND = {
     COMMAND_DESCRIPTION: "곧/다음에 등장하는 필드보스의 정보를 보거나 특정 필드보스를 검색합니다.",
     LOG_CODE: "boss",
     SUB_COMMANDS: {
-        INFORMATION: {
+        INSTANT_SEARCH: {
             COMMAND_NAME: "정보",
             COMMAND_DESCRIPTION: "곧/다음에 등장하는 필드보스의 정보를 봅니다.",
             OPTION_NAME: "타이밍",
