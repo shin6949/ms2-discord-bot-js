@@ -45,39 +45,79 @@ export default {
         await interaction.deferReply();
 
         const subcommand = interaction.options.getSubcommand();
-        if(subcommand === FIELD_BOSS_COMMAND.SUB_COMMANDS.INSTANT_SEARCH) {
-            _instantSearch(interaction);
-        } else if(subcommand === FIELD_BOSS_COMMAND.SUB_COMMANDS.TIME_SEARCH) {
+        if(subcommand === FIELD_BOSS_COMMAND.SUB_COMMANDS.INSTANT_SEARCH.COMMAND_NAME) {
+            let message = (optionValue) => {
+                // 옵션 종류에 따라 url 변경
+                if (optionValue === COMMON_CONSTANTS.SOON) {
+                    return `${FIELD_BOSS_COMMAND.MESSAGE.SOON} ${FIELD_BOSS_COMMAND.MESSAGE.APPEAR_MESSAGE}`;
+                } else {
+                    return `${FIELD_BOSS_COMMAND.MESSAGE.NEXT} ${FIELD_BOSS_COMMAND.MESSAGE.APPEAR_MESSAGE}`;
+                }
+            }
+
+            const url = (optionValue) => {
+                // 옵션 종류에 따라 url 변경
+                if (optionValue === COMMON_CONSTANTS.SOON) {
+                    return `${process.env.API_SERVER_URL}/boss/soon`;
+                } else {
+                    return `${process.env.API_SERVER_URL}/boss/next`;
+                }
+            }
+
+            const requestData = {
+                uri: url(interaction.options.getString(FIELD_BOSS_COMMAND.SUB_COMMANDS.INSTANT_SEARCH.OPTION_NAME)),
+                method: "GET",
+                json: true
+            }
+            const query = `/${FIELD_BOSS_COMMAND.COMMAND_NAME} ${interaction.options.getSubcommand()} ` +
+                `${FIELD_BOSS_COMMAND.SUB_COMMANDS.INSTANT_SEARCH.OPTION_NAME}:${interaction.options.getString(FIELD_BOSS_COMMAND.SUB_COMMANDS.INSTANT_SEARCH.OPTION_NAME)}`;
+
+            await _requestAndSendMessage(interaction, requestData, query, message(FIELD_BOSS_COMMAND.SUB_COMMANDS.INSTANT_SEARCH.OPTION_NAME));
+        } else if(subcommand === FIELD_BOSS_COMMAND.SUB_COMMANDS.TIME_SEARCH.COMMAND_NAME) {
+            const time = interaction.options.getString(FIELD_BOSS_COMMAND.SUB_COMMANDS.TIME_SEARCH.OPTION_NAME);
             // 시간 검색의 경우
+            const requestData = {
+                uri: `${process.env.API_SERVER_URL}/boss/get-by-time`,
+                method: "GET",
+                qs: {
+                    minute: time
+                },
+                json: true
+            }
+
+            const message = `${time}${FIELD_BOSS_COMMAND.MESSAGE.TIME_MESSAGE}`;
+            const query = `/${FIELD_BOSS_COMMAND.COMMAND_NAME} ${interaction.options.getSubcommand()} ` +
+                `${FIELD_BOSS_COMMAND.SUB_COMMANDS.TIME_SEARCH.OPTION_NAME}:${time}`;
+
+            await _requestAndSendMessage(interaction, requestData, query, message);
         } else {
             // 이름 검색의 경우
+            const keyword = interaction.options.getString(FIELD_BOSS_COMMAND.SUB_COMMANDS.NAME_SEARCH.OPTION_NAME);
+            const requestData = {
+                uri: `${process.env.API_SERVER_URL}/boss/get-by-name`,
+                method: "GET",
+                qs: {
+                    name: keyword
+                },
+                json: true
+            }
+
+            const message = `\'${keyword}\'${FIELD_BOSS_COMMAND.MESSAGE.NAME_MESSAGE}`;
+            const query = `/${FIELD_BOSS_COMMAND.COMMAND_NAME} ${interaction.options.getSubcommand()} ` +
+                `${FIELD_BOSS_COMMAND.SUB_COMMANDS.NAME_SEARCH.OPTION_NAME}:${keyword}`;
+
+            await _requestAndSendMessage(interaction, requestData, query, message);
         }
     }
 }
 
-function _instantSearch(interaction) {
-    const url = (optionValue) => {
-        // 옵션 종류에 따라 url 변경
-        if (optionValue === COMMON_CONSTANTS.SOON) {
-            return `${process.env.API_SERVER_URL}/boss/soon`;
-        } else {
-            return `${process.env.API_SERVER_URL}/boss/next`;
-        }
-    }
-
-    const requestData = {
-        uri: url(interaction.options.getString(FIELD_BOSS_COMMAND.SUB_COMMANDS.INSTANT_SEARCH.OPTION_NAME)),
-        method: "GET",
-        json: true
-    }
-
+async function _requestAndSendMessage(interaction, requestData, query, message) {
     requestToAPI(requestData).then(async response => {
-        await interaction.editReply({embeds: _configureEmbedContent(response.body)});
+        const embedData = _configureEmbedContent(response.body);
+        await interaction.editReply({content: message, embeds: embedData});
         console.log("Process Success.");
 
-        // Embed 컨텐츠는 String이 아니므로 병렬로 진행
-        _insertLog(response.body, interaction.guildId, interaction.user.id, interaction.options.getString(MINIGAME_COMMAND.OPTION_NAME));
-
+        _insertLog(interaction, embedData, message, query);
     }).catch(err => {
         console.log("ERROR OCCURRED.");
         console.error(err);
@@ -90,19 +130,44 @@ function _configureEmbedContent(body) {
     let result = [];
 
     bossList.forEach(item => {
-        const embedContent =  new MessageEmbed()
+        let fields = [
+            {name: `${FIELD_BOSS_COMMAND.EMBED_FIELD.NAME}`, value: `${item.bossName}`, inline: true},
+            {name: `${FIELD_BOSS_COMMAND.EMBED_FIELD.TIME}`, value: `${item.time}${FIELD_BOSS_COMMAND.EMBED_FIELD.MINUTE}`, inline: true},
+            {name: `${FIELD_BOSS_COMMAND.EMBED_FIELD.MAP}`, value: `${item.map}`, inline: true},
+            {name: `${FIELD_BOSS_COMMAND.EMBED_FIELD.LEVEL}`, value: `${item.level}`, inline: true}
+        ]
+
+        if(item.comment !== null) {
+            fields.push({name: `${FIELD_BOSS_COMMAND.EMBED_FIELD.COMMENT}`, value: `${item.comment}`, inline: true});
+        }
+
+        const embedContent = new MessageEmbed()
             // 주황색
             .setColor('#d85311')
-            .setTitle(`필드보스 정보`)
-            .addFields(
-                {name: `이름`, value: item.bossName},
-                {name: `등장 시간`, value: `${item.time}분`},
-                {name: `등장 맵`, value: item.map },
-                {name: `레벨`, value: item.level },
-                body.comment === null ? {name: `특이사항`, value: `${body.comment}` } : null
-            );
+            .setTitle(`${FIELD_BOSS_COMMAND.EMBED_TITLE}`)
+            .addFields(fields);
+
         result.push(embedContent);
     });
 
     return result;
+}
+
+function _insertLog(interaction, embedData, message, query) {
+    let replyData = `${message}\n`;
+
+    embedData.forEach(item => {
+        replyData += `${item.title}\n`;
+        item.fields.forEach(item => {
+            replyData += `${item.name}: ${item.value}\n`;
+        });
+    });
+
+    const log = new Log(query, FIELD_BOSS_COMMAND.LOG_CODE, interaction.guildId === null, interaction.user.id, interaction.guildId, replyData);
+
+    try {
+        insertLog(log);
+    } catch (err) {
+        console.error(err);
+    }
 }

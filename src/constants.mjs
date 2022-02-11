@@ -32,6 +32,22 @@ export let FIELD_BOSS_COMMAND = {
     COMMAND_NAME: "필드보스",
     COMMAND_DESCRIPTION: "곧/다음에 등장하는 필드보스의 정보를 보거나 특정 필드보스를 검색합니다.",
     LOG_CODE: "boss",
+    MESSAGE: {
+        SOON: "곧",
+        NEXT: "다음 시간에",
+        APPEAR_MESSAGE: "등장할 필드보스의 정보입니다.",
+        TIME_MESSAGE: "분에 등장하는 필드보스의 정보입니다.",
+        NAME_MESSAGE: "에 대한 검색 결과입니다."
+    },
+    EMBED_TITLE: "필드보스 정보",
+    EMBED_FIELD: {
+        NAME: "이름",
+        TIME: "등장 시간",
+        MAP: "등장 맵",
+        MINUTE: "분",
+        LEVEL: "레벨",
+        COMMENT: "특이 사항"
+    },
     SUB_COMMANDS: {
         INSTANT_SEARCH: {
             COMMAND_NAME: "정보",
