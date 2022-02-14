@@ -50,7 +50,7 @@ export default {
     }
 }
 
-function _insertLog(body, guildId, userId, optionValue) {
+const _insertLog = (body, guildId, userId, optionValue) => {
     const sentMessage = `${body.time}${LEGION_WAR_COMMAND.EMBED_TITLE}\n${LEGION_WAR_COMMAND.EMBED_DESCRIPTION}\n` +
         `${LEGION_WAR_COMMAND.FIRST}${LEGION_WAR_COMMAND.EMBED_FIELD_TITLE}\n${body["legion-wars"][0].name}\n` +
         `${LEGION_WAR_COMMAND.SECOND}${LEGION_WAR_COMMAND.EMBED_FIELD_TITLE}\n${body["legion-wars"][1].name}`;
@@ -62,7 +62,7 @@ function _insertLog(body, guildId, userId, optionValue) {
     });
 }
 
-function _configureEmbedContent(body) {
+const _configureEmbedContent = (body) => {
     return new MessageEmbed()
         // 주황색
         .setColor('#d85311')

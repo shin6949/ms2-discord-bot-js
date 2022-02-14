@@ -43,7 +43,7 @@ export default {
     }
 }
 
-function _configureMessageAndReturn(body, keyword) {
+const _configureMessageAndReturn = (body, keyword) => {
     let message = `\'${keyword}\'에 대한 ${body.mode} 결과: ${body.count}개`;
     const problemList = body.problems;
 
@@ -69,7 +69,7 @@ function _configureMessageAndReturn(body, keyword) {
     return {content: message};
 }
 
-function _sendMessageAndReturnMessage(body, interaction, keyword) {
+const _sendMessageAndReturnMessage = (body, interaction, keyword) => {
     const message = _configureMessageAndReturn(body, keyword);
     interaction.editReply(message);
     console.log("Process Success.");

@@ -13,7 +13,7 @@ export default {
     }
 }
 
-function _insertLog(guildId, userId) {
+const _insertLog = (guildId, userId) => {
     const sentMessage = `${REPORT_COMMAND.COMMAND_REPLY}`;
     const query = `/${REPORT_COMMAND.COMMAND_NAME}`;
     const log = new Log(query, REPORT_COMMAND.LOG_CODE, guildId === null, userId, guildId, sentMessage);

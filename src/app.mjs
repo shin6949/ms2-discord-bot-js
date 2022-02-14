@@ -29,6 +29,7 @@ console.log(`Registered Button Actions Num: ${client.buttonActions.size}`);
 
 client.once('ready', () => {
 	console.log('Ready to receive commands');
+	client.user.setActivity('/로 명령', { type: 'WATCHING' });
 	console.log(`Client ID: ${client.user.id} / Client Username: ${client.user.tag}`);
 });
 

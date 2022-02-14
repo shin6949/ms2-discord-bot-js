@@ -111,7 +111,7 @@ export default {
     }
 }
 
-async function _requestAndSendMessage(interaction, requestData, query, message) {
+const _requestAndSendMessage = async (interaction, requestData, query, message) => {
     requestToAPI(requestData).then(async response => {
         const embedData = _configureEmbedContent(response.body);
         await interaction.editReply({content: message, embeds: embedData});
@@ -125,7 +125,7 @@ async function _requestAndSendMessage(interaction, requestData, query, message) 
     });
 }
 
-function _configureEmbedContent(body) {
+const _configureEmbedContent = (body) => {
     const bossList = body.bosses;
     let result = [];
 
@@ -153,7 +153,7 @@ function _configureEmbedContent(body) {
     return result;
 }
 
-function _insertLog(interaction, embedData, message, query) {
+const _insertLog = (interaction, embedData, message, query) => {
     let replyData = `${message}\n`;
 
     embedData.forEach(item => {
