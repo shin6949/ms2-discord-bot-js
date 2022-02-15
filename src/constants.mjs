@@ -171,3 +171,32 @@ export let REPORT_COMMAND = {
     COMMAND_REPLY: `제보는 ${process.env.EMAIL}으로 부탁드립니다.`,
     LOG_CODE: "custom"
 }
+
+export let TROPHY_COMMAND = {
+    COMMAND_NAME: "트로피",
+    COMMAND_DESCRIPTION: "메이뷰에서 트로피 정보를 받아옵니다.",
+    CHARACTER_SEARCH: {
+        COMMAND_NAME: "캐릭터",
+        COMMAND_DESCRIPTION: "특정 캐릭터의 실시간 트로피 정보를 받아옵니다.",
+        OPTION_NAME: "닉네임",
+        OPTION_DESCRIPTION: "찾을 캐릭터의 닉네임을 입력합니다.",
+        EMBED_TITLE: "캐릭터 검색 결과",
+        NICKNAME: "닉네임"
+    },
+    GUILD_SEARCH: {
+        COMMAND_NAME: "길드",
+        COMMAND_DESCRIPTION: "특정 길드의 실시간 트로피의 정보를 받아옵니다.",
+        OPTION_NAME: "이름",
+        OPTION_DESCRIPTION: "찾을 길드의 이름을 입력합니다.",
+        EMBED_TITLE: "길드 검색 결과",
+        GUILD_NAME: "길드명",
+        GUILD_MASTER: "길드장"
+    },
+    NO_RESULT_COMMENT: "에 대한 검색 결과가 없습니다.",
+    RANK: "순위",
+    RANK_UNIT: "위",
+    TROPHY: "트로피",
+    TROPHY_UNIT: "개",
+    FOOTER: "이 정보는 5분 가량의 차이가 있음.",
+    LOG_CODE: "trophy"
+}

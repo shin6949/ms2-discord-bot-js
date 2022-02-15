@@ -1,48 +1,47 @@
 import {SlashCommandBuilder} from "@discordjs/builders";
 import {default as requestToAPI} from './request-to-api.mjs';
-import {default as errorHandling} from './error-handling.mjs';
 import {MessageAttachment, MessageEmbed} from "discord.js";
 import insertLog, {Log} from "./insert-log.mjs";
-import {COMMON_CONSTANTS} from "../constants.mjs";
+import {COMMON_CONSTANTS, TROPHY_COMMAND} from "../constants.mjs";
 import request from "request";
 import fs from "fs";
 
 export default {
     data: new SlashCommandBuilder()
-        .setName("트로피")
-        .setDescription("메이뷰에서 트로피 정보를 받아옵니다.")
+        .setName(TROPHY_COMMAND.COMMAND_NAME)
+        .setDescription(TROPHY_COMMAND.COMMAND_DESCRIPTION)
         .addSubcommand(subcommand =>
-            subcommand.setName("개인")
-                .setDescription("특정 캐릭터의 실시간 트로피 정보를 받아옵니다.")
+            subcommand.setName(TROPHY_COMMAND.CHARACTER_SEARCH.COMMAND_NAME)
+                .setDescription(TROPHY_COMMAND.CHARACTER_SEARCH.COMMAND_DESCRIPTION)
                 .addStringOption(option =>
-                    option.setName("닉네임")
-                        .setDescription("찾을 캐릭터의 닉네임을 입력합니다.")
+                    option.setName(TROPHY_COMMAND.CHARACTER_SEARCH.OPTION_NAME)
+                        .setDescription(TROPHY_COMMAND.CHARACTER_SEARCH.OPTION_DESCRIPTION)
                         .setRequired(true)
                 )
         )
         .addSubcommand(subcommand =>
-            subcommand.setName("길드")
-                .setDescription("특정 길드의 실시간 트로피의 정보를 받아옵니다.")
+            subcommand.setName(TROPHY_COMMAND.GUILD_SEARCH.COMMAND_NAME)
+                .setDescription(TROPHY_COMMAND.GUILD_SEARCH.COMMAND_DESCRIPTION)
                 .addStringOption(option =>
-                    option.setName("이름")
-                        .setDescription("찾을 길드의 이름을 입력합니다.")
+                    option.setName(TROPHY_COMMAND.GUILD_SEARCH.OPTION_NAME)
+                        .setDescription(TROPHY_COMMAND.GUILD_SEARCH.OPTION_DESCRIPTION)
                         .setRequired(true))
         ),
     async execute(interaction) {
         console.log("Trophy interaction received.");
         await interaction.deferReply();
 
-        if (interaction.options.getSubcommand() === "개인") {
-            await _configureCharacterContent(interaction);
+        if (interaction.options.getSubcommand() === TROPHY_COMMAND.CHARACTER_SEARCH.COMMAND_NAME) {
+            await _sendCharacterContent(interaction);
         } else {
-            await _configureGuildEmbedContent(interaction);
+            await _sendGuildContent(interaction);
         }
-        // _insertLog(interaction.guildId, interaction.user.id);
     }
 }
 
-const _configureCharacterContent = async (interaction) => {
-    const keyword = interaction.options.getString("닉네임");
+const _sendCharacterContent = async (interaction) => {
+    const keyword = interaction.options.getString(TROPHY_COMMAND.CHARACTER_SEARCH.OPTION_NAME);
+    const query = `/${TROPHY_COMMAND.COMMAND_NAME} ${TROPHY_COMMAND.CHARACTER_SEARCH.OPTION_NAME}:${keyword}`;
     const requestData = {
         url: `${process.env.API_SERVER_URL}/trophy/character/realtime`,
         qs: {
@@ -53,7 +52,11 @@ const _configureCharacterContent = async (interaction) => {
 
     const response = await requestToAPI(requestData);
     if (response.body.status === "fail") {
-        await interaction.editReply({content: `닉네임 \'${keyword}\'에 대한 검색 결과가 없습니다.`});
+        const message = `${TROPHY_COMMAND.CHARACTER_SEARCH.OPTION_NAME} \'${keyword}\'${TROPHY_COMMAND.NO_RESULT_COMMENT}`;
+        await interaction.editReply({content: message});
+
+        const log = new Log(query, TROPHY_COMMAND.LOG_CODE, interaction.guildId === null, interaction.user.id, interaction.guildId, message);
+        insertLog(log);
         return;
     }
 
@@ -63,26 +66,34 @@ const _configureCharacterContent = async (interaction) => {
     const color = COMMON_CONSTANTS.EMBED_COLOR[Math.floor(Math.random() * COMMON_CONSTANTS.EMBED_COLOR.length)];
     const embed = new MessageEmbed()
         .setColor(color)
-        .setTitle(`캐릭터 검색 결과`)
+        .setTitle(TROPHY_COMMAND.CHARACTER_SEARCH.EMBED_TITLE)
         .setThumbnail(`attachment://profile.jpg`)
         .addFields(
             {
-                name: `닉네임`, value: character.nickname, inline: false
+                name: TROPHY_COMMAND.CHARACTER_SEARCH.NICKNAME, value: character.nickname, inline: false
             },
             {
-                name: `순위`, value: `${character.rank.toLocaleString()}위`, inline: true
+                name: TROPHY_COMMAND.RANK, value: `${character.rank.toLocaleString()}${TROPHY_COMMAND.RANK_UNIT}`, inline: true
             },
             {
-                name: `트로피`, value: `${character.trophy.toLocaleString()}개`, inline: true
+                name: TROPHY_COMMAND.TROPHY, value: `${character.trophy.toLocaleString()}${TROPHY_COMMAND.TROPHY_UNIT}`, inline: true
             }
         )
-        .setFooter({ text: '이 정보는 5분 가량의 차이가 있음.'});
+        .setFooter({ text: TROPHY_COMMAND.FOOTER});
 
     await interaction.editReply({embeds: [embed], files: [file]});
+
+    const message = `${TROPHY_COMMAND.CHARACTER_SEARCH.EMBED_TITLE}\n${TROPHY_COMMAND.CHARACTER_SEARCH.NICKNAME}:${character.nickname}` +
+    `${TROPHY_COMMAND.RANK}:${character.rank.toLocaleString()}${TROPHY_COMMAND.RANK_UNIT}\n` +
+    `${TROPHY_COMMAND.TROPHY}:${character.trophy.toLocaleString()}${TROPHY_COMMAND.TROPHY_UNIT}\n` +
+    `${TROPHY_COMMAND.FOOTER}`;
+    const log = new Log(query, TROPHY_COMMAND.LOG_CODE, interaction.guildId === null, interaction.user.id, interaction.guildId, message);
+    insertLog(log);
 }
 
-const _configureGuildEmbedContent = async (interaction) => {
-    const keyword = interaction.options.getString("이름");
+const _sendGuildContent = async (interaction) => {
+    const keyword = interaction.options.getString(TROPHY_COMMAND.GUILD_SEARCH.OPTION_NAME);
+    const query = `/${TROPHY_COMMAND.COMMAND_NAME} ${TROPHY_COMMAND.GUILD_SEARCH.OPTION_NAME}:${keyword}`;
     const requestData = {
         url: `${process.env.API_SERVER_URL}/trophy/guild/realtime`,
         qs: {
@@ -93,7 +104,11 @@ const _configureGuildEmbedContent = async (interaction) => {
 
     const response = await requestToAPI(requestData);
     if (response.body.status === "fail") {
-        await interaction.editReply({content: `길드명 \'${keyword}\'에 대한 검색 결과가 없습니다.`});
+        const message = `${TROPHY_COMMAND.GUILD_SEARCH.OPTION_NAME} \'${keyword}\'${TROPHY_COMMAND.NO_RESULT_COMMENT}`;
+        await interaction.editReply({content: message});
+
+        const log = new Log(query, TROPHY_COMMAND.LOG_CODE, interaction.guildId === null, interaction.user.id, interaction.guildId, message);
+        insertLog(log).catch();
         return;
     }
 
@@ -103,25 +118,33 @@ const _configureGuildEmbedContent = async (interaction) => {
     const color = COMMON_CONSTANTS.EMBED_COLOR[Math.floor(Math.random() * COMMON_CONSTANTS.EMBED_COLOR.length)];
     const embed = new MessageEmbed()
         .setColor(color)
-        .setTitle(`길드 검색 결과`)
+        .setTitle(TROPHY_COMMAND.GUILD_SEARCH.EMBED_TITLE)
         .setThumbnail(`attachment://profile.jpg`)
         .addFields(
             {
-                name: `닉네임`, value: guild.guildName, inline: false
+                name: TROPHY_COMMAND.GUILD_SEARCH.GUILD_NAME, value: guild.guildName, inline: false
             },
             {
-                name: `순위`, value: `${guild.rank.toLocaleString()}위`, inline: true
+                name: TROPHY_COMMAND.RANK, value: `${guild.rank.toLocaleString()}${TROPHY_COMMAND.RANK_UNIT}`, inline: true
             },
             {
-                name: `트로피`, value: `${guild.trophy.toLocaleString()}개`, inline: true
+                name: TROPHY_COMMAND.TROPHY, value: `${guild.trophy.toLocaleString()}${TROPHY_COMMAND.TROPHY_UNIT}`, inline: true
             },
             {
-                name: `길드장`, value: `${guild.master}`, inline: true
+                name: TROPHY_COMMAND.GUILD_SEARCH.GUILD_MASTER, value: guild.master, inline: true
             }
         )
-        .setFooter({ text: '이 정보는 5분 가량의 차이가 있음.'});
+        .setFooter({ text: TROPHY_COMMAND.FOOTER});
 
     await interaction.editReply({embeds: [embed], files: [file]});
+
+    const message = `${TROPHY_COMMAND.GUILD_SEARCH.EMBED_TITLE}\n${TROPHY_COMMAND.GUILD_SEARCH.GUILD_NAME}:${guild.name}` +
+        `${TROPHY_COMMAND.RANK}:${guild.rank.toLocaleString()}${TROPHY_COMMAND.RANK_UNIT}\n` +
+        `${TROPHY_COMMAND.TROPHY}:${guild.trophy.toLocaleString()}${TROPHY_COMMAND.TROPHY_UNIT}\n` +
+        `${TROPHY_COMMAND.GUILD_SEARCH.GUILD_MASTER}:${guild.master}\n` +
+        `${TROPHY_COMMAND.FOOTER}`;
+    const log = new Log(query, TROPHY_COMMAND.LOG_CODE, interaction.guildId === null, interaction.user.id, interaction.guildId, message);
+    insertLog(log).catch();
 }
 
 const _downloadProfileImage = (url, filename) => {
