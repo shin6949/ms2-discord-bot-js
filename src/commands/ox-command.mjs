@@ -3,7 +3,7 @@ import {MessageActionRow, MessageButton} from 'discord.js';
 import {default as requestToAPI} from './request-to-api.mjs';
 import {default as errorHandling} from './error-handling.mjs';
 import {default as insertLog, Log} from './insert-log.mjs';
-import {report_command} from "./command-index.mjs";
+import {reportCommand} from "./command-index.mjs";
 // 상수
 import {OX_QUIZ_COMMAND} from "../constants.mjs";
 
@@ -54,7 +54,7 @@ const _configureMessageAndReturn = (body, keyword) => {
     }
 
     problemList.forEach(problem => {
-        if(problem.answer) {
+        if (problem.answer) {
             message += `\`\`\`ini\n[O] ${problem.question}\`\`\``;
         } else {
             message += `\`\`\`\n[X] ${problem.question}\`\`\``;
@@ -62,7 +62,7 @@ const _configureMessageAndReturn = (body, keyword) => {
     });
 
     // Discord 글제수 제한 예외처리
-    if(message.length > 3000) {
+    if (message.length > 3000) {
         message = OX_QUIZ_COMMAND.DISCORD_MAX_LETTER_ERROR;
     }
 
@@ -86,6 +86,6 @@ export let reportButton = {
             .setStyle('PRIMARY'),
         ),
     async execute(interaction) {
-        await report_command.execute(interaction);
+        await reportCommand.execute(interaction);
     }
 }

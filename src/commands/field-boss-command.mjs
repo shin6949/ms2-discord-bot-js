@@ -30,7 +30,7 @@ export default {
                         .addChoices(FIELD_BOSS_COMMAND.SUB_COMMANDS.TIME_SEARCH.OPTION_CHOICES)
                 )
         )
-        .addSubcommand( subcommand =>
+        .addSubcommand(subcommand =>
             subcommand.setName(FIELD_BOSS_COMMAND.SUB_COMMANDS.NAME_SEARCH.COMMAND_NAME)
                 .setDescription(FIELD_BOSS_COMMAND.SUB_COMMANDS.NAME_SEARCH.COMMAND_DESCRIPTION)
                 .addStringOption(option =>
@@ -45,7 +45,7 @@ export default {
         await interaction.deferReply();
 
         const subcommand = interaction.options.getSubcommand();
-        if(subcommand === FIELD_BOSS_COMMAND.SUB_COMMANDS.INSTANT_SEARCH.COMMAND_NAME) {
+        if (subcommand === FIELD_BOSS_COMMAND.SUB_COMMANDS.INSTANT_SEARCH.COMMAND_NAME) {
             let message = (optionValue) => {
                 // 옵션 종류에 따라 url 변경
                 if (optionValue === COMMON_CONSTANTS.SOON) {
@@ -73,7 +73,7 @@ export default {
                 `${FIELD_BOSS_COMMAND.SUB_COMMANDS.INSTANT_SEARCH.OPTION_NAME}:${interaction.options.getString(FIELD_BOSS_COMMAND.SUB_COMMANDS.INSTANT_SEARCH.OPTION_NAME)}`;
 
             await _requestAndSendMessage(interaction, requestData, query, message(FIELD_BOSS_COMMAND.SUB_COMMANDS.INSTANT_SEARCH.OPTION_NAME));
-        } else if(subcommand === FIELD_BOSS_COMMAND.SUB_COMMANDS.TIME_SEARCH.COMMAND_NAME) {
+        } else if (subcommand === FIELD_BOSS_COMMAND.SUB_COMMANDS.TIME_SEARCH.COMMAND_NAME) {
             const time = interaction.options.getString(FIELD_BOSS_COMMAND.SUB_COMMANDS.TIME_SEARCH.OPTION_NAME);
             // 시간 검색의 경우
             const requestData = {
@@ -132,18 +132,23 @@ const _configureEmbedContent = (body) => {
     bossList.forEach(item => {
         let fields = [
             {name: `${FIELD_BOSS_COMMAND.EMBED_FIELD.NAME}`, value: `${item.bossName}`, inline: true},
-            {name: `${FIELD_BOSS_COMMAND.EMBED_FIELD.TIME}`, value: `${item.time}${FIELD_BOSS_COMMAND.EMBED_FIELD.MINUTE}`, inline: true},
+            {
+                name: `${FIELD_BOSS_COMMAND.EMBED_FIELD.TIME}`,
+                value: `${item.time}${FIELD_BOSS_COMMAND.EMBED_FIELD.MINUTE}`,
+                inline: true
+            },
             {name: `${FIELD_BOSS_COMMAND.EMBED_FIELD.MAP}`, value: `${item.map}`, inline: true},
             {name: `${FIELD_BOSS_COMMAND.EMBED_FIELD.LEVEL}`, value: `${item.level}`, inline: true}
         ]
 
-        if(item.comment !== null) {
+        if (item.comment !== null) {
             fields.push({name: `${FIELD_BOSS_COMMAND.EMBED_FIELD.COMMENT}`, value: `${item.comment}`, inline: true});
         }
 
+        const color = COMMON_CONSTANTS.EMBED_COLOR[Math.floor(Math.random() * COMMON_CONSTANTS.EMBED_COLOR.length)];
         const embedContent = new MessageEmbed()
             // 주황색
-            .setColor('#d85311')
+            .setColor(color)
             .setTitle(`${FIELD_BOSS_COMMAND.EMBED_TITLE}`)
             .addFields(fields);
 

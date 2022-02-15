@@ -7,4 +7,4 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 
-CMD [ "node", "./src/app.mjs" ]
+CMD [ "node", "./src/app.mjs", "&" ]

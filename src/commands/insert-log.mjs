@@ -24,7 +24,7 @@ export default async function (log) {
 }
 
 export class Log {
-    constructor (query, callValue, isDm, userId, serverId, response) {
+    constructor(query, callValue, isDm, userId, serverId, response) {
         this._query = query;
         this._callValue = callValue;
         this._isDm = isDm;

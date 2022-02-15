@@ -8,15 +8,10 @@ import {default as insertLog, Log} from "./insert-log.mjs";
 export default {
     data: new SlashCommandBuilder().setName(MINIGAME_COMMAND.COMMAND_NAME)
         .setDescription(MINIGAME_COMMAND.COMMAND_DESCRIPTION)
-        .addStringOption(option =>
-            option.setName(MINIGAME_COMMAND.OPTION_NAME)
-                .setDescription(MINIGAME_COMMAND.OPTION_DESCRIPTION)
-                .setRequired(true)
-                .addChoices([
-                    [COMMON_CONSTANTS.SOON, COMMON_CONSTANTS.SOON],
-                    [COMMON_CONSTANTS.NEXT, COMMON_CONSTANTS.NEXT]
-                ])
-        ),
+        .addStringOption(option => option.setName(MINIGAME_COMMAND.OPTION_NAME)
+            .setDescription(MINIGAME_COMMAND.OPTION_DESCRIPTION)
+            .setRequired(true)
+            .addChoices([[COMMON_CONSTANTS.SOON, COMMON_CONSTANTS.SOON], [COMMON_CONSTANTS.NEXT, COMMON_CONSTANTS.NEXT]])),
     async execute(interaction) {
         console.log("Minigame interaction received.");
         await interaction.deferReply();
@@ -31,9 +26,7 @@ export default {
         }
 
         const requestData = {
-            uri: url(interaction.options.getString(MINIGAME_COMMAND.OPTION_NAME)),
-            method: "GET",
-            json: true
+            uri: url(interaction.options.getString(MINIGAME_COMMAND.OPTION_NAME)), method: "GET", json: true
         }
 
         requestToAPI(requestData).then(async response => {
@@ -51,12 +44,9 @@ export default {
     }
 }
 
-function _insertLog(body, guildId, userId, optionValue) {
+const _insertLog = (body, guildId, userId, optionValue) => {
     try {
-        const sentMessage = `${body.time}${MINIGAME_COMMAND.EMBED_TITLE}\n` +
-            `${MINIGAME_COMMAND.FIRST}${MINIGAME_COMMAND.EMBED_FIELD_TITLE}\n${body["first-game"]}\n` +
-            `${MINIGAME_COMMAND.SECOND}${MINIGAME_COMMAND.EMBED_FIELD_TITLE}\n${body["second-game"]}\n` +
-            `${MINIGAME_COMMAND.PVP}\n${body['pvp-game']}`;
+        const sentMessage = `${body.time}${MINIGAME_COMMAND.EMBED_TITLE}\n` + `${MINIGAME_COMMAND.FIRST}${MINIGAME_COMMAND.EMBED_FIELD_TITLE}\n${body["first-game"]}\n` + `${MINIGAME_COMMAND.SECOND}${MINIGAME_COMMAND.EMBED_FIELD_TITLE}\n${body["second-game"]}\n` + `${MINIGAME_COMMAND.PVP}\n${body['pvp-game']}`;
         const query = `/${MINIGAME_COMMAND.COMMAND_NAME} ${MINIGAME_COMMAND.OPTION_NAME}:${optionValue}`;
         const log = new Log(query, MINIGAME_COMMAND.LOG_CODE, guildId === null, userId, guildId, sentMessage);
 
@@ -66,14 +56,15 @@ function _insertLog(body, guildId, userId, optionValue) {
     }
 }
 
-function _configureEmbedContent(body) {
+const _configureEmbedContent = (body) => {
+    const color = COMMON_CONSTANTS.EMBED_COLOR[Math.floor(Math.random() * COMMON_CONSTANTS.EMBED_COLOR.length)];
     return new MessageEmbed()
-        // 주황색
-        .setColor('#d85311')
+        .setColor(color)
         .setTitle(`${body.time}${MINIGAME_COMMAND.EMBED_TITLE}`)
-        .addFields(
-            {name: `${MINIGAME_COMMAND.FIRST}${MINIGAME_COMMAND.EMBED_FIELD_TITLE}`, value: body["first-game"]},
-            {name: `${MINIGAME_COMMAND.SECOND}${MINIGAME_COMMAND.EMBED_FIELD_TITLE}`, value: body["second-game"]},
-            {name: `${MINIGAME_COMMAND.PVP}`, value: body['pvp-game'] },
-        );
+        .addFields({
+                name: `${MINIGAME_COMMAND.FIRST}${MINIGAME_COMMAND.EMBED_FIELD_TITLE}`, value: body["first-game"]
+            },
+            {
+                name: `${MINIGAME_COMMAND.SECOND}${MINIGAME_COMMAND.EMBED_FIELD_TITLE}`, value: body["second-game"]
+            }, {name: `${MINIGAME_COMMAND.PVP}`, value: body['pvp-game']});
 }

@@ -69,7 +69,13 @@ const _configureEmbedContent = (body) => {
         .setTitle(`${body.time}${LEGION_WAR_COMMAND.EMBED_TITLE}`)
         .setDescription(LEGION_WAR_COMMAND.EMBED_DESCRIPTION)
         .addFields(
-            {name: `${LEGION_WAR_COMMAND.FIRST}${LEGION_WAR_COMMAND.EMBED_FIELD_TITLE}`, value: body["legion-wars"][0].name},
-            {name: `${LEGION_WAR_COMMAND.SECOND}${LEGION_WAR_COMMAND.EMBED_FIELD_TITLE}`, value: body["legion-wars"][1].name}
+            {
+                name: `${LEGION_WAR_COMMAND.FIRST}${LEGION_WAR_COMMAND.EMBED_FIELD_TITLE}`,
+                value: body["legion-wars"][0].name
+            },
+            {
+                name: `${LEGION_WAR_COMMAND.SECOND}${LEGION_WAR_COMMAND.EMBED_FIELD_TITLE}`,
+                value: body["legion-wars"][1].name
+            }
         );
 }
