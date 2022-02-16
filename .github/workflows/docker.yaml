@@ -32,5 +32,5 @@ jobs:
 
       - name: Docker Build
         run: |
-          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository_owner }}/ms2-ox-bot-js:latest --push .
-          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository_owner }}/ms2-ox-bot-js:${{ env.RELEASE_VERSION }} --push .
+          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository_owner }}/ox-bot-js:latest --push .
+          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository_owner }}/ox-bot-js:${{ env.RELEASE_VERSION }} --push .
