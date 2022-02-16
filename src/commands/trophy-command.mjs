@@ -138,7 +138,7 @@ const _sendGuildContent = async (interaction) => {
 
     await interaction.editReply({embeds: [embed], files: [file]});
 
-    const message = `${TROPHY_COMMAND.GUILD_SEARCH.EMBED_TITLE}\n${TROPHY_COMMAND.GUILD_SEARCH.GUILD_NAME}:${guild.name}` +
+    const message = `${TROPHY_COMMAND.GUILD_SEARCH.EMBED_TITLE}\n${TROPHY_COMMAND.GUILD_SEARCH.GUILD_NAME}:${guild.guildName}` +
         `${TROPHY_COMMAND.RANK}:${guild.rank.toLocaleString()}${TROPHY_COMMAND.RANK_UNIT}\n` +
         `${TROPHY_COMMAND.TROPHY}:${guild.trophy.toLocaleString()}${TROPHY_COMMAND.TROPHY_UNIT}\n` +
         `${TROPHY_COMMAND.GUILD_SEARCH.GUILD_MASTER}:${guild.master}\n` +
