@@ -1,7 +1,7 @@
 {
   "name": "ms2-discord-bot",
   "version": "1.0.0",
-  "main": "src/index.js",
+  "main": "src/app.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,11 +15,20 @@
     "discord.js": "^13.6.0",
     "dotenv": "^15.0.0",
     "erlpack": "github:discord/erlpack",
+    "request": "^2.88.2",
     "utf-8-validate": "^5.0.8",
     "zlib-sync": "^0.1.7"
   },
   "devDependencies": {
     "eslint": "^8.8.0"
   },
-  "description": ""
+  "description": "메이플스토리 2의 OX 퀴즈쇼의 족보 정보를 제공하는 Discord 봇의 JavaScript 버전",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shin6949/ms2-ox-bot-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/shin6949/ms2-ox-bot-js/issues"
+  },
+  "homepage": "https://github.com/shin6949/ms2-ox-bot-js#readme"
 }
