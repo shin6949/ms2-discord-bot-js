@@ -75,6 +75,8 @@ export let reportButton = {
     await reportCommand.run(interaction);
   }
 }
+
+// Command
 export const oxCommand: Command = {
   name: OX_QUIZ_COMMAND.COMMAND_NAME,
   description: OX_QUIZ_COMMAND.COMMAND_DESCRIPTION,

@@ -1,11 +1,9 @@
 import dotenv from "dotenv";
 import { Client, Collection, Intents } from "discord.js";
-// 명령 액션들
-import * as buttonCommands from "./commands/button-index";
 // 상수
 import { COMMON_CONSTANTS } from "./constants";
 // Ban Check 용
-import { default as requestToAPI } from "./commands/request-to-api";
+import { default as requestToAPI } from "./commands/RequestToAPI";
 import interactionCreate from "./commands/interactionCreate";
 
 // Dev, Prod 구분 코드 필요.

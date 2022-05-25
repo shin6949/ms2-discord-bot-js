@@ -201,9 +201,9 @@ export let TROPHY_COMMAND = {
     LOG_CODE: "trophy"
 }
 
-export type apiRequestForm = {
+export interface apiRequestForm {
     uri: string,
     method: "GET" | "POST",
-    qs: object
+    qs?: object
     json: boolean,
 }
