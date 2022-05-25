@@ -1,4 +1,4 @@
-import {COMMON_CONSTANTS} from "../constants.mjs";
+import {COMMON_CONSTANTS} from "../constants";
 
 export default async function (interaction){
     try {

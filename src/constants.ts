@@ -200,3 +200,10 @@ export let TROPHY_COMMAND = {
     FOOTER: "이 정보는 5분 가량의 차이가 있음.",
     LOG_CODE: "trophy"
 }
+
+export type apiRequestForm = {
+    uri: string,
+    method: "GET" | "POST",
+    qs: object
+    json: boolean,
+}

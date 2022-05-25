@@ -1,8 +1,8 @@
 import {SlashCommandBuilder} from "@discordjs/builders";
-import {default as requestToAPI} from './request-to-api.mjs';
+import {default as requestToAPI} from './request-to-api';
 import {MessageAttachment, MessageEmbed} from "discord.js";
 import insertLog, {Log} from "./insert-log.mjs";
-import {COMMON_CONSTANTS, TROPHY_COMMAND} from "../constants.mjs";
+import {COMMON_CONSTANTS, TROPHY_COMMAND} from "../constants";
 import request from "request";
 import fs from "fs";
 

@@ -1,9 +1,9 @@
 import {SlashCommandBuilder} from "@discordjs/builders";
-import {COMMON_CONSTANTS, MINIGAME_COMMAND} from "../constants.mjs";
-import {default as requestToAPI} from './request-to-api.mjs';
-import {default as errorHandling} from './error-handling.mjs';
+import {COMMON_CONSTANTS, MINIGAME_COMMAND} from "../constants";
+import {default as requestToAPI} from './request-to-api';
+import {default as errorHandling} from './error-handling';
 import {MessageEmbed} from "discord.js";
-import {default as insertLog, Log} from "./insert-log.mjs";
+import {default as insertLog, Log} from "./insert-log";
 
 export default {
     data: new SlashCommandBuilder().setName(MINIGAME_COMMAND.COMMAND_NAME)

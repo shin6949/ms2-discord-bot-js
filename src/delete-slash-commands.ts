@@ -3,13 +3,13 @@ import {REST} from '@discordjs/rest';
 import {Routes} from 'discord-api-types/v9';
 
 dotenv.config({ path: '../.env'});
-const token = process.env.DISCORD_BOT_TOKEN;
+const token: string | null | undefined = process.env.DISCORD_BOT_TOKEN;
 const clientId = process.env.CLIENT_ID;
 const guildId = process.env.GUILD_ID;
 
-if(token === null) {
-	console.log("Token is NULL");
-	process.exit(0);
+if(!token) {
+	console.log("Token is Falsy");
+	process.exit(1);
 }
 
 const rest = new REST({ version: '9' }).setToken(token);

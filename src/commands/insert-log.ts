@@ -1,4 +1,4 @@
-import {default as requestToAPI} from './request-to-api.mjs';
+import {default as requestToAPI} from './request-to-api';
 
 export default async function (log) {
     const requestData = {

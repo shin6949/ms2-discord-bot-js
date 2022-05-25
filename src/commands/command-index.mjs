@@ -1,6 +1,0 @@
-export {default as reportCommand} from './report-command.mjs'
-export {default as oxCommand} from './ox-command.mjs'
-export {default as minigameCommand} from './minigame-command.mjs'
-export {default as fieldBossCommand} from './field-boss-command.mjs'
-export {default as regionWarCommand} from './region-war-command.mjs'
-export {default as trophyCommand} from './trophy-command.mjs'

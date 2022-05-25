@@ -1,9 +1,9 @@
 import {SlashCommandBuilder} from "@discordjs/builders";
-import {COMMON_CONSTANTS, LEGION_WAR_COMMAND} from "../constants.mjs";
+import {COMMON_CONSTANTS, LEGION_WAR_COMMAND} from "../constants";
 import {MessageEmbed} from "discord.js";
-import {default as errorHandling} from './error-handling.mjs';
-import insertLog, {Log} from "./insert-log.mjs";
-import requestToAPI from './request-to-api.mjs';
+import {default as errorHandling} from './error-handling';
+import insertLog, {Log} from "./insert-log";
+import requestToAPI from './request-to-api';
 
 export default {
     data: new SlashCommandBuilder().setName(LEGION_WAR_COMMAND.COMMAND_NAME)
