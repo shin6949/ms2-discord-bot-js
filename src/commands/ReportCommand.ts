@@ -1,7 +1,7 @@
-import { BaseCommandInteraction } from "discord.js";
-import { Command } from "../types/command";
-import { REPORT_COMMAND } from "../constants";
-import insertLog, { Log } from "./insert-log";
+import { BaseCommandInteraction } from 'discord.js';
+import { Command } from '../types/command';
+import { REPORT_COMMAND } from '../constants';
+import insertLog, { Log } from './InsertLog';
 
 export const reportCommand: Command = {
   name: REPORT_COMMAND.COMMAND_NAME,

@@ -1,32 +1,29 @@
-import {
-  ApplicationCommandOptionData,
-  BaseCommandInteraction, MessageActionRow, MessageButton,
-} from "discord.js";
-import { default as requestToAPI } from "./RequestToAPI";
-import { default as errorHandling } from "./error-handling";
-import { default as insertLog, Log } from "./insert-log";
-import { reportCommand } from "./ReportCommand";
-import {Command} from "../types/command";
+import { ApplicationCommandOptionData, BaseCommandInteraction, MessageActionRow, MessageButton } from 'discord.js';
+import { default as requestToAPI } from './RequestToAPI';
+import { default as errorHandling } from './error-handling';
+import { default as insertLog, Log } from './InsertLog';
+import { reportCommand } from './ReportCommand';
+import { Command } from '../types/command';
 // 상수
-import {apiRequestForm, OX_QUIZ_COMMAND} from "../constants";
-import {Response} from "request";
+import { apiRequestForm, OX_QUIZ_COMMAND } from '../constants';
+import { Response } from 'request';
 
-const keywordOption : ApplicationCommandOptionData = {
-  type: "STRING",
+const keywordOption: ApplicationCommandOptionData = {
+  type: 'STRING',
   name: OX_QUIZ_COMMAND.OPTION_NAME,
   description: OX_QUIZ_COMMAND.OPTION_DESCRIPTION,
-  required: true
-}
+  required: true,
+};
 
 interface apiResponse {
-  mode: string,
-  count: number,
-  problems: problem[]
+  mode: string;
+  count: number;
+  problems: problem[];
 }
 
 interface problem {
-  answer: boolean,
-  question: string
+  answer: boolean;
+  question: string;
 }
 
 const _configureMessageAndReturn = (body: apiResponse, keyword: string | number | boolean) => {
@@ -58,23 +55,20 @@ const _configureMessageAndReturn = (body: apiResponse, keyword: string | number 
 const _sendMessageAndReturnMessage = async (body: apiResponse, interaction: BaseCommandInteraction, keyword: string | number | boolean) => {
   const message = _configureMessageAndReturn(body, keyword);
   await interaction.editReply(message);
-  console.log("Process Success.");
+  console.log('Process Success.');
 
   return message.content;
 };
 
 // 검색 결과가 없을 시 표출할 버튼 객체 및 액션
 export let reportButton = {
-  button: new MessageActionRow()
-      .addComponents(new MessageButton()
-          .setCustomId('ox-report-button')
-          .setLabel(OX_QUIZ_COMMAND.REPORT_BUTTON_NAME)
-          .setStyle('PRIMARY'),
-      ),
+  button: new MessageActionRow().addComponents(
+    new MessageButton().setCustomId('ox-report-button').setLabel(OX_QUIZ_COMMAND.REPORT_BUTTON_NAME).setStyle('PRIMARY'),
+  ),
   async execute(interaction: BaseCommandInteraction) {
     await reportCommand.run(interaction);
-  }
-}
+  },
+};
 
 // Command
 export const oxCommand: Command = {
@@ -82,15 +76,15 @@ export const oxCommand: Command = {
   description: OX_QUIZ_COMMAND.COMMAND_DESCRIPTION,
   options: [keywordOption],
   async run(interaction: BaseCommandInteraction): Promise<void> {
-    console.log("OX Interaction Received.");
+    console.log('OX Interaction Received.');
 
     // get으로 호출할 경우 key-value의 값이 등장.
-    const keyword = interaction.options.get(OX_QUIZ_COMMAND.OPTION_NAME)?.value ?? "";
+    const keyword = interaction.options.get(OX_QUIZ_COMMAND.OPTION_NAME)?.value ?? '';
     await interaction.deferReply();
 
-    const requestData : apiRequestForm = {
+    const requestData: apiRequestForm = {
       uri: `${process.env.API_SERVER_URL}/ox/search`,
-      method: "GET",
+      method: 'GET',
       qs: {
         keyword: keyword,
       },
@@ -98,18 +92,18 @@ export const oxCommand: Command = {
     };
 
     requestToAPI(requestData)
-        // @ts-ignore
-        .then((response: Response) => {
-          const sentMessage = _sendMessageAndReturnMessage(response.body, interaction, keyword);
-          const query = `/${OX_QUIZ_COMMAND.COMMAND_NAME} ${OX_QUIZ_COMMAND.OPTION_NAME}:${keyword}`;
-          const log = new Log(query, OX_QUIZ_COMMAND.LOG_CODE, interaction.guildId === null, interaction.user.id, interaction.guildId, sentMessage);
+      // @ts-ignore
+      .then((response: Response) => {
+        const sentMessage = _sendMessageAndReturnMessage(response.body, interaction, keyword);
+        const query = `/${OX_QUIZ_COMMAND.COMMAND_NAME} ${OX_QUIZ_COMMAND.OPTION_NAME}:${keyword}`;
+        const log = new Log(query, OX_QUIZ_COMMAND.LOG_CODE, interaction.guildId === null, interaction.user.id, interaction.guildId, sentMessage);
 
-          insertLog(log);
-        })
-        .catch((err: Error) => {
-          console.log("ERROR OCCURRED.");
-          console.error(err);
-          errorHandling(interaction);
-        });
+        insertLog(log);
+      })
+      .catch((err: Error) => {
+        console.log('ERROR OCCURRED.');
+        console.error(err);
+        errorHandling(interaction);
+      });
   },
 };

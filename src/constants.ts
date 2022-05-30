@@ -203,7 +203,7 @@ export let TROPHY_COMMAND = {
 
 export interface apiRequestForm {
     uri: string,
-    method: "GET" | "POST",
+    method: string,
     qs?: object
     json: boolean,
 }
